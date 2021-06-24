@@ -1,0 +1,19 @@
+{
+  "name": "koha-plugin-pay-via-xpresspay",
+  "version": "1.0.5",
+  "previous_version": "1.0.4",
+  "description": "Koha Xpresspay OPAC Online Payment Plugin",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bywatersolutions/koha-plugin-pay-via-xpresspay.git"
+  },
+  "author": "Kyle M Hall <kyle@bywatersolutions.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/bywatersolutions/koha-plugin-pay-via-xpresspay/issues"
+  },
+  "homepage": "https://github.com/bywatersolutions/koha-plugin-pay-via-xpresspay#readme",
+}
