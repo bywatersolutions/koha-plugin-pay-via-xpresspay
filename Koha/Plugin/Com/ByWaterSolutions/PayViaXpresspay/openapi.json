@@ -1,0 +1,28 @@
+{
+  "/payment":{
+    "post":{
+      "x-mojo-to":"Koha::Plugin::Com::ByWaterSolutions::PayViaXpresspay::API#handle_payment",
+      "operationId":"handlePayment",
+      "tags":[
+        "xpresspay"
+      ],
+      "responses":{
+        "200":{
+          "description":"Payment accepted"
+        },
+        "404":{
+          "description":"An error occured",
+          "schema":{
+            "type":"object",
+            "properties":{
+              "error":{
+                "description":"An explanation for the error",
+                "type":"string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

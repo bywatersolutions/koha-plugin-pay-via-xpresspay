@@ -228,6 +228,21 @@ sub configure {
     }
 }
 
+sub api_routes {
+    my ( $self, $args ) = @_;
+
+    my $spec_str = $self->mbf_read('openapi.json');
+    my $spec     = decode_json($spec_str);
+
+    return $spec;
+}
+
+sub api_namespace {
+    my ($self) = @_;
+
+    return 'xpresspay';
+}
+
 sub install() {
     my $dbh = C4::Context->dbh();
 
