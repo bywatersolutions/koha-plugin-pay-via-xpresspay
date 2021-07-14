@@ -12,7 +12,7 @@ use Koha::Account;
 use Koha::Account::Lines;
 use URI::Escape qw(uri_unescape);
 use LWP::UserAgent;
-use JSON qw(from_json);
+use Mojo::JSON qw(decode_json);
 
 ## Here we set our plugin version
 our $VERSION = "{VERSION}";
