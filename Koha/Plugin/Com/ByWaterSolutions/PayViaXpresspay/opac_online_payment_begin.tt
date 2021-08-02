@@ -11,8 +11,8 @@
 
 <div class="main">
     <ul class="breadcrumb">
-        <li><a href="/cgi-bin/koha/opac-main.pl">Home</a> <span class="divider">&rsaquo;</span></li>
-        <li><a href="/cgi-bin/koha/opac-user.pl">[% borrower.firstname %] [% borrower.surname %]</a><span class="divider">&rsaquo;</span></li>
+        <li><a href="/cgi-bin/koha/opac-main.pl">Home</a> <span class="divider">&rsaquo;</span> </li>
+        <li><a href="/cgi-bin/koha/opac-user.pl">[% borrower.firstname %] [% borrower.surname %]</a> <span class="divider">&rsaquo;</span></li>
         <li><a href="#">Pay your fines and charges</a></li>
     </ul>
 
@@ -20,14 +20,13 @@
         <div class="row-fluid">
             <div class="span2">
                 <div id="navigation">
-                    [% INCLUDE 'navigation.inc' IsPatronPage=1 %]
                 </div>
             </div>
             <div class="span10">
                 <div id="useraccount" class="maincontent">
                     <p>
                         You are about to initiate a payment for the following fees to your library via Xpresspay.
-                        Do you wish to begin?
+                        Do you wish to proceed?
                     </p>
 
                     <table class="table table-bordered table-striped">
@@ -71,40 +70,31 @@
                         </tfoot>
                     </table>
 
-                    <form method="post" action="[% XpresspayPostUrl %]">
-                        <input type="hidden" name="Address1" value="[% borrower.address %]" />
-                        <input type="hidden" name="City" value="[% borrower.city %]" />
-                        <input type="hidden" name="F-5494" value="[% borrower.surname %], [% borrower.firstname %]" />
-                        <input type="hidden" name="F-5495" value="[% borrower.cardnumber %]" />
-                        <input type="hidden" name="FirstName" value="[% borrower.firstname %]" />
-                        <input type="hidden" name="LastName" value="[% borrower.surname %]" />
-                        <input type="hidden" name="Phone" value="[% borrower.phone %]" />
-                        <input type="hidden" name="SettleCode" value="[% XpresspaySettleCode %]" />
-                        <input type="hidden" name="State" value="[% borrower.state %]" />
-                        <input type="hidden" name="SuccessURL" value="[% OPACBaseURL %]/cgi-bin/koha/opac-account-pay-return.pl?payment_method=Koha::Plugin::Com::ByWaterSolutions::PayViaXpresspay" />
-                        <input type="hidden" name="Ttid" value="[% XpresspayMerchantCode %]" />
-                        <input type="hidden" name="ZipCode" value="[% borrower.zipcode %]" />
-                        <input type="hidden" name="email" value="[% borrower.email %]" />
-                        <input type="hidden" name="user_id" value="[% borrower.borrowernumber %]" />
-
-                        <input type="hidden" name="ApiPassword" value="[% XpresspayApiPassword %]" />
-
-                        [% SET data = {} %]
-                        [% data.token = token %]
-                        [% data.borrowernumber = borrower.id %]
-                        [% data.accountlines = [] %]
-                        [% FOREACH a IN accountlines %]
-                            [% data.accountlines.push( a.id ) %]
-                        [% END %]
-                        <input type="hidden" name="OrderToken" value='[% To.json(data) %]' />
+                    <form method="get" action="https://pay.xpress-pay.com">
 
                         [% SET paymentAmount = 0 %]
                         [% FOREACH a IN accountlines %]
                             [% SET paymentAmount = paymentAmount + a.amountoutstanding %]
                         [% END %]
-                        <input type="hidden" name="paymentAmount" value="[% paymentAmount %]" />
 
-                        <input type="submit" class="btn" value="Yes, proceed with payment" />
+                        [% SET accountline_ids = [] %]
+                        [% FOREACH a IN accountlines %]
+                            [% accountline_ids.push( a.id ) %]
+                        [% END %]
+
+                        <input type="hidden" name="a" value="[% paymentAmount %]" />
+                        <input type="hidden" name="pk" value="[% XpresspayPaymentType | html %]" />
+                        <input type="hidden" name="n" value="[% borrower.surname | html %], [% borrower.firstname | html %]" />
+                        <input type="hidden" name="addr" value="[% borrower.address | html %]" />
+                        <input type="hidden" name="z" value="[% borrower.zipcode | html %]" />
+                        <input type="hidden" name="e" value="[% borrower.email | html %]" />
+                        <input type="hidden" name="p" value="[% borrower.phone | html %]" />
+
+                        <input type="hidden" name="l1" value="[% borrower.borrowernumber | html %]" />
+                        <input type="hidden" name="l2" value='[% accountline_ids.join(",") | html %]' />
+                        <input type="hidden" name="l3" value="[% token | html %]" />
+
+                        <input type="submit" class="btn btn-default" value="Yes, proceed with payment" />
                     </form>
                 </div> <!-- / #useraccount -->
             </div> <!-- / .span10 -->

@@ -7,7 +7,8 @@ use base qw(Koha::Plugins::Base);
 
 ## We will also need to include any Koha libraries we want to access
 use C4::Context;
-use C4::Auth;
+use C4::Auth qw(get_template_and_user);
+
 use Koha::Account;
 use Koha::Account::Lines;
 use URI::Escape qw(uri_unescape);
@@ -19,11 +20,11 @@ our $VERSION = "{VERSION}";
 
 ## Here is our metadata, some keys are required, some are optional
 our $metadata = {
-    name          => 'Pay Via Xpresspay',
-    author        => 'Kyle M Hall',
-    description   => 'This plugin enables online OPAC fee payments via Xpresspay',
-    date_authored => '2018-11-27',
-    date_updated  => '1900-01-01',
+    name        => 'Pay Via Xpresspay',
+    author      => 'Kyle M Hall',
+    description => 'This plugin enables online OPAC fee payments via Xpresspay',
+    date_authored   => '2018-11-27',
+    date_updated    => '1900-01-01',
     minimum_version => '18.00.00.000',
     maximum_version => undef,
     version         => $VERSION,
@@ -83,11 +84,7 @@ sub opac_online_payment_begin {
         borrower             => scalar Koha::Patrons->find($borrowernumber),
         payment_method       => scalar $cgi->param('payment_method'),
         enable_opac_payments => $self->retrieve_data('enable_opac_payments'),
-        XpresspayPostUrl        => $self->retrieve_data('XpresspayPostUrl'),
-        XpresspayMerchantCode   => $self->retrieve_data('XpresspayMerchantCode'),
-        XpresspaySettleCode     => $self->retrieve_data('XpresspaySettleCode'),
-        XpresspayApiUrl         => $self->retrieve_data('XpresspayApiUrl'),
-        XpresspayApiPassword    => $self->retrieve_data('XpresspayApiPassword'),
+        XpresspayPaymentType => $self->retrieve_data('XpresspayPaymentType'),
         accountlines         => \@accountlines,
         token                => $token,
     );
@@ -107,11 +104,8 @@ sub configure {
         $template->param(
             enable_opac_payments =>
               $self->retrieve_data('enable_opac_payments'),
-            XpresspayPostUrl      => $self->retrieve_data('XpresspayPostUrl'),
-            XpresspayMerchantCode => $self->retrieve_data('XpresspayMerchantCode'),
-            XpresspaySettleCode   => $self->retrieve_data('XpresspaySettleCode'),
-            XpresspayApiUrl       => $self->retrieve_data('XpresspayApiUrl'),
-            XpresspayApiPassword  => $self->retrieve_data('XpresspayApiPassword'),
+            XpresspayPaymentType =>
+              $self->retrieve_data('XpresspayPaymentType'),
         );
 
         print $cgi->header();
@@ -121,11 +115,7 @@ sub configure {
         $self->store_data(
             {
                 enable_opac_payments => $cgi->param('enable_opac_payments'),
-                XpresspayPostUrl        => $cgi->param('XpresspayPostUrl'),
-                XpresspayMerchantCode   => $cgi->param('XpresspayMerchantCode'),
-                XpresspaySettleCode     => $cgi->param('XpresspaySettleCode'),
-                XpresspayApiUrl         => $cgi->param('XpresspayApiUrl'),
-                XpresspayApiPassword    => $cgi->param('XpresspayApiPassword'),
+                XpresspayPaymentType => $cgi->param('XpresspayPaymentType'),
             }
         );
         $self->go_home();
@@ -148,11 +138,34 @@ sub api_namespace {
 }
 
 sub install() {
-    return 1;
+    my $dbh = C4::Context->dbh();
+
+    my $query = q{
+        CREATE TABLE IF NOT EXISTS xpresspay_plugin_tokens
+          (
+             token          VARCHAR(128),
+             created_on     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+             borrowernumber INT(11) NOT NULL,
+             PRIMARY KEY (token),
+             CONSTRAINT token_bn FOREIGN KEY (borrowernumber) REFERENCES borrowers (
+             borrowernumber ) ON DELETE CASCADE ON UPDATE CASCADE
+          )
+        ENGINE=innodb
+        DEFAULT charset=utf8mb4
+        COLLATE=utf8mb4_unicode_ci;
+    };
+
+    return $dbh->do($query);
 }
 
 sub uninstall() {
-    return 1;
+    my $dbh = C4::Context->dbh();
+
+    my $query = q{
+        DROP TABLE IF EXISTS xpresspay_plugin_tokens;
+    };
+
+    return $dbh->do($query);
 }
 
 1;
