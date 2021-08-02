@@ -1,10 +1,108 @@
 {
   "/payment":{
-    "post":{
-      "x-mojo-to":"Koha::Plugin::Com::ByWaterSolutions::PayViaXpresspay::API#handle_payment",
+    "get":{
+      "x-mojo-to":"Com::ByWaterSolutions::PayViaXpresspay::API#handle_payment",
       "operationId":"handlePayment",
       "tags":[
         "xpresspay"
+      ],
+      "parameters": [
+        {
+          "name": "l1",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "l2",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "l3",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "address",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "phone",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "transactionId",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "timestamp",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "billAmount",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "totalAmount",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "paymentType",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "fullName",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "zip",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "siteFeeAmount",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "uid",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        }
       ],
       "responses":{
         "200":{
