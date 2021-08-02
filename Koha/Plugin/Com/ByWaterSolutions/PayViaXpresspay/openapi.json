@@ -1,6 +1,6 @@
 {
   "/payment":{
-    "get":{
+    "post":{
       "x-mojo-to":"Com::ByWaterSolutions::PayViaXpresspay::API#handle_payment",
       "operationId":"handlePayment",
       "tags":[
