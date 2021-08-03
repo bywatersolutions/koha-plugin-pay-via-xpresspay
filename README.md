@@ -8,6 +8,6 @@ Download the latest version from the [release page](https://github.com/bywaterso
 
 Upload via Koha's plugin uploader.
 
-## Config
+## Configuration
 
 Xpresspay will provide you a payment type code, browse to the plugin's configuration page, input this code, and save the new configuration.
