@@ -88,7 +88,7 @@ records.
 
 | Store | Contents | Retention |
 |---|---|---|
-| [`xpresspay_plugin_tokens`](https://github.com/bywatersolutions/koha-plugin-pay-via-xpresspay/blob/760c1e109ae600bd4f14819b6e4d806a769d91c0/Koha/Plugin/Com/ByWaterSolutions/PayViaXpresspay.pm#L144) | one-time token (`B<borrowernumber>T<epoch>`), created_on, borrowernumber | Deleted on successful payment; **rows from abandoned checkouts accumulate indefinitely** (no purge; FK cascade on patron deletion is the only reaper). [Dropped on uninstall](https://github.com/bywatersolutions/koha-plugin-pay-via-xpresspay/blob/760c1e109ae600bd4f14819b6e4d806a769d91c0/Koha/Plugin/Com/ByWaterSolutions/PayViaXpresspay.pm#L165). |
+| [`xpresspay_plugin_tokens`](https://github.com/bywatersolutions/koha-plugin-pay-via-xpresspay/blob/760c1e109ae600bd4f14819b6e4d806a769d91c0/Koha/Plugin/Com/ByWaterSolutions/PayViaXpresspay.pm#L144) | one-time token (`B<borrowernumber>T<epoch>`), created_on, borrowernumber | Deleted on successful payment. As of an unreleased change, a nightly job removes tokens older than seven days; at the reviewed commit, abandoned rows accumulated with no purge. [Dropped on uninstall](https://github.com/bywatersolutions/koha-plugin-pay-via-xpresspay/blob/760c1e109ae600bd4f14819b6e4d806a769d91c0/Koha/Plugin/Com/ByWaterSolutions/PayViaXpresspay.pm#L165). |
 | `accountlines` | amount from `billAmount`, note `Paid via Xpresspay` | Per the library's Koha retention settings |
 
 **Logs:** two unconditional `warn`s fire on every payment —
