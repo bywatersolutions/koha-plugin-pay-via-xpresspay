@@ -137,6 +137,30 @@ sub api_namespace {
     return 'xpresspay';
 }
 
+=head3 cronjob_nightly
+
+Koha runs this nightly for every enabled plugin ( misc/cronjobs/plugins_nightly.pl,
+invoked by the packages' daily cron ). Removes tokens from checkouts that were begun
+but never completed. The rows are otherwise only removed when a payment finishes, so
+abandoned checkouts accumulate forever.
+
+A checkout completes within minutes, so a week old token is long abandoned. The window
+is deliberately generous - deleting a token for a checkout still in flight would make
+its payment unprocessable when the processor answers.
+
+=cut
+
+sub cronjob_nightly {
+    my ($self) = @_;
+
+    C4::Context->dbh->do(q{
+        DELETE FROM xpresspay_plugin_tokens
+        WHERE created_on < DATE_SUB(NOW(), INTERVAL 7 DAY)
+    });
+
+    return;
+}
+
 sub install() {
     my $dbh = C4::Context->dbh();
 
@@ -147,7 +171,7 @@ sub install() {
              created_on     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
              borrowernumber INT(11) NOT NULL,
              PRIMARY KEY (token),
-             CONSTRAINT token_bn FOREIGN KEY (borrowernumber) REFERENCES borrowers (
+             CONSTRAINT xpresspay_token_bn FOREIGN KEY (borrowernumber) REFERENCES borrowers (
              borrowernumber ) ON DELETE CASCADE ON UPDATE CASCADE
           )
         ENGINE=innodb
